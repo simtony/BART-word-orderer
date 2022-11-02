@@ -2,7 +2,7 @@
 
 This repo contains implementation for the COLING 2022
 paper [On the Role of Pre-trained Language Models in Word Ordering: A Case Study with BART](https://aclanthology.org/2022.coling-1.567.pdf)
-. It achieves state-of-the-art results on the classic word ordering task and the partial tree linearization task. 
+. It achieves state-of-the-art results on the classic word ordering task and the partial tree linearization task. Here is a short [oral presentation](https://youtu.be/sWhNsSmqLdw) for a quick grasp of the gist. 
 
 The implementation is based on [fairseq](https://github.com/facebookresearch/fairseq). To see the modifications, compare
 the HEAD commit with the `init with fairseq v0.10.2` comit, which is identical to the `v0.10.2` tag of fairseq. Note that our implementation is only for research purpose and there is huge room for efficiency improvements.

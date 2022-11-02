@@ -295,6 +295,24 @@ class UnorderedConstraintState(ConstraintState):
         else:
             return self.root.next_tokens()
 
+    def next_legals(self):
+        tokens = []
+        states = []
+        if self.node.terminal:
+            node = self.root
+        else:
+            node = self.node
+        for token, child in node.children.items():
+            if self.generated[child] < child.num_constraints:
+                next_state = UnorderedConstraintState(child, copy_from=self)
+                # State to maintain. Generated count is already maintained in UnorderedConstraintState.__init__
+                # Here we maintain set of completed. This is used to determine whether the state is finished.
+                if child.terminal and self.completed[child] < child.terminal:
+                    next_state.completed[child] += 1
+                tokens.append(token)
+                states.append(next_state)
+        return tokens, states
+
     def advance(self, token: int):
         """Reads in a token and advances the state. Here's how it works.
 

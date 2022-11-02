@@ -172,6 +172,8 @@ class TransformerModel(FairseqEncoderDecoderModel):
                             help='block size of quantization noise at training time')
         parser.add_argument('--quant-noise-scalar', type=float, metavar='D', default=0,
                             help='scalar quantization noise and scalar quantization at training time')
+        parser.add_argument('--no-input-position-embeddings', default=False, action='store_true',
+                            help='if set, disables positional embeddings (outside self attention)')
         # fmt: on
 
     @classmethod
@@ -329,7 +331,7 @@ class TransformerEncoder(FairseqEncoder):
                 self.padding_idx,
                 learned=args.encoder_learned_pos,
             )
-            if not args.no_token_positional_embeddings
+            if not args.no_token_positional_embeddings and not args.no_input_position_embeddings
             else None
         )
 
@@ -418,7 +420,7 @@ class TransformerEncoder(FairseqEncoder):
         # compute padding mask
         encoder_padding_mask = src_tokens.eq(self.padding_idx)
 
-        encoder_states = [] if return_all_hiddens else None
+        encoder_states = [x] if return_all_hiddens else None
 
         # encoder layers
         for layer in self.layers:

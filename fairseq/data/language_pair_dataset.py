@@ -160,6 +160,7 @@ def collate(
         constraints = torch.zeros((len(samples), max(lens))).long()
         for i, sample in enumerate(samples):
             constraints[i, 0 : lens[i]] = samples[i].get("constraints")
+        constraints = constraints.index_select(0, sort_order)
         batch["constraints"] = constraints
 
     return batch

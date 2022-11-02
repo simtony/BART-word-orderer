@@ -1,0 +1,80 @@
+---
+template:
+  train: >
+    fairseq-train data-{data}/{mode}
+      --restore-file bart/bart.base/model.pt
+      --arch bart_base
+      --layernorm-embedding
+      --lr-scheduler inverse_sqrt
+      --share-decoder-input-output-embed
+      --share-all-embeddings
+      --reset-optimizer --reset-dataloader --reset-meters
+      --criterion label_smoothed_cross_entropy_rdrop
+      --optimizer adam
+      --keep-interval-updates 5 --patience 10
+      --validate-interval-updates 1000
+      --save-interval-updates 1000
+      --no-save-optimizer-state
+      --no-last-checkpoints
+      --no-epoch-checkpoints
+      --find-unused-parameters
+      --log-format simple --log-interval 100
+      --tensorboard-logdir {_output}
+      --save-dir {_output} --fp16
+      --lr 1e-4 --warmup-updates 1000 --batch-size 20 --update-freq 1
+      --reg-alpha 1 --dropout 0.3 --label-smoothing 0.3
+
+  avg: >
+    python scripts/average_checkpoints.py --inputs {_output}
+           --num-update-checkpoints 5 --output {_output}/checkpoint_avg.pt
+  rm: >
+    rm -rf {_output}/checkpoint_*_*.pt {_output}/checkpoint_best.pt
+
+default:
+  data: bart
+  mode: none
+
+resource: [ 0, 1, 2, 3, 0, 1, 2, 3 ]
+
+# run -y params_bart.yaml -t <title> -o output
+---
+# reproduce the baseline: Table 1
+_title: base
+data: [ bart ]
+mode: [ base ]
+
+
+---
+# test permutation sensitivity: Table 2 & Table 6
+# with data augmentation:
+# baseX -> augX
+# shuffle subwords:
+# sbase -> shuf
+_title: permutation
+data: [ bart ]
+mode: [ base0, base2, base4, base6, base8, sbase ]
+
+---
+# simulate unconditional modeling: Figure 4
+_title: unconditional
+data: [ bart ]
+mode: [ ubase ]
+
+---
+# inject different parts of a dependency tree: Table 3 & Table 4
+
+_title: tree
+data: [ bart ]
+mode: [ brac, pos, udep, ldep, all ]
+
+---
+# partial tree linearization: Table 5
+_title: partial
+data: [ bart ]
+mode: [ part, bnp ]
+
+
+
+
+
+

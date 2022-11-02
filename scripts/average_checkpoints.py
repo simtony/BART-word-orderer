@@ -93,7 +93,7 @@ def last_n_checkpoints(paths, n, update_based, upper_bound=None):
         raise Exception(
             "Found {} checkpoint files but need at least {}", len(entries), n
         )
-    return [os.path.join(path, x[1]) for x in sorted(entries, reverse=True)[:n]]
+    return [os.path.join(path, x[1]) for x in sorted(entries, reverse=False)[:n]]
 
 
 def main():

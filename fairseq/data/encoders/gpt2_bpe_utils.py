@@ -65,10 +65,17 @@ class Encoder:
         except ImportError:
             raise ImportError("Please install regex with: pip install regex")
 
+        self.escape = {"<NN:>", "<IN:>", "<NNP:>", "<DT:>", "<JJ:>", "<NNS:>", "<CD:>", "<RB:>", "<VBD:>", "<VB:>",
+                       "<CC:>", "<TO:>", "<VBZ:>", "<VBN:>", "<PRP:>", "<VBG:>", "<VBP:>", "<MD:>", "<POS:>",
+                       "<PRP$:>", "<WDT:>", "<JJR:>", "<RP:>", "<WP:>", "<WRB:>", "<NNPS:>", "<JJS:>", "<RBR:>",
+                       "<EX:>", "<RBS:>", "<PDT:>", "<WP$:>", "<FW:>", "<SYM:>", "<UH:>",
+                       "<LS:>", "<PUNCT:>", "<:NMOD>", "<:VMOD>", "<:P>", "<:PMOD>", "<:SUB>", "<:ROOT>", "<:OBJ>",
+                       "<:AMOD>", "<:VC>", "<:SBAR>", "<:PRD>", "<:DEP>", "<[>", "<]>"}
+
         # Should haved added re.IGNORECASE so BPE merges can happen for capitalized versions of contractions
-        self.pat = self.re.compile(
-            r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
-        )
+        self.escape_pat = self.re.compile(
+                "|".join(r"(?={p})|(?<={p})".format(p=re.escape(s)) for s in self.escape))
+        self.pat = self.re.compile(r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+""")
 
     def bpe(self, token):
         if token in self.cache:
@@ -113,11 +120,19 @@ class Encoder:
 
     def encode(self, text):
         bpe_tokens = []
-        for token in self.re.findall(self.pat, text):
-            token = "".join(self.byte_encoder[b] for b in token.encode("utf-8"))
-            bpe_tokens.extend(
-                self.encoder[bpe_token] for bpe_token in self.bpe(token).split(" ")
-            )
+        if self.escape_pat.match(text) is None:
+            text = " " + text
+        for fragment in self.escape_pat.split(text):
+            if not fragment:
+                continue
+            if fragment in self.escape:
+                bpe_tokens.append(fragment)
+            else:
+                for token in self.re.findall(self.pat, fragment):
+                    token = "".join(self.byte_encoder[b] for b in token.encode("utf-8"))
+                    bpe_tokens.extend(
+                        self.encoder[bpe_token] for bpe_token in self.bpe(token).split(" ")
+                    )
         return bpe_tokens
 
     def decode(self, tokens):

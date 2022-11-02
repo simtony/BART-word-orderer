@@ -1,0 +1,53 @@
+Influential members	NNS	3	SUB
+of	IN	0	NMOD
+the House Ways and Means Committee	NNP	1	PMOD
+introduced	VBD	-1	ROOT
+legislation	NN	3	OBJ
+that	WDT	4	NMOD
+would	MD	5	SBAR
+restrict	VB	6	VC
+how	WRB	7	VMOD
+the new savings-and-loan bailout agency	NN	10	SUB
+can	MD	8	SBAR
+raise	VB	10	VC
+capital	NN	11	OBJ
+,	,	7	P
+creating	VBG	7	VMOD
+another potential obstacle	NN	14	OBJ
+to	TO	15	NMOD
+the government 's	POS	18	NMOD
+sale	NN	16	PMOD
+of	IN	18	NMOD
+sick thrifts	NNS	19	PMOD
+.	.	3	P
+
+The bill	NN	12	SUB
+,	,	0	P
+whose	WP$	0	NMOD
+backers	NNS	2	NMOD
+include	VBP	2	SBAR
+Chairman Dan Rostenkowski	NNP	4	OBJ
+-LRB-	-LRB-	9	P
+D.	NNP	9	DEP
+,	,	9	P
+Ill.	NNP	5	NMOD
+-RRB-	-RRB-	9	P
+,	,	0	P
+would	MD	-1	ROOT
+prevent	VB	12	VC
+the Resolution Trust Corp.	NNP	13	OBJ
+from	IN	13	VMOD
+raising	VBG	15	PMOD
+temporary working capital	NN	16	OBJ
+by	IN	13	VMOD
+having	VBG	18	PMOD
+an RTC-owned bank or thrift issue debt	NN	19	OBJ
+that	WDT	20	NMOD
+would	MD	21	SBAR
+n't	RB	22	VMOD
+be	VB	22	VC
+counted	VBN	24	VC
+on	IN	25	VMOD
+the federal budget	NN	26	PMOD
+.	.	12	P
+

@@ -40,7 +40,7 @@ class GPT2BPE(object):
 
     def decode(self, x: str) -> str:
         return self.bpe.decode(
-            [int(tok) if tok not in {"<unk>", "<mask>"} else tok for tok in x.split()]
+            [int(tok) if tok.isdecimal() else tok for tok in x.split()]
         )
 
     def is_beginning_of_word(self, x: str) -> bool:

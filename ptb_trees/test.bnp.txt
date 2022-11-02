@@ -1,0 +1,37 @@
+No	RB	3	VMOD
+,	,	3	P
+it	PRP	3	SUB
+was	VBD	-1	ROOT
+n't	RB	3	VMOD
+Black Monday	NNP	3	PRD
+.	.	3	P
+
+But	CC	21	VMOD
+while	IN	21	VMOD
+the New York Stock Exchange	NNP	3	SUB
+did	VBD	1	SBAR
+n't	RB	3	VMOD
+fall	VB	3	VC
+apart	RB	5	VMOD
+Friday	NNP	5	VMOD
+as	IN	5	VMOD
+the Dow Jones Industrial Average	NNP	10	SUB
+plunged	VBD	8	SBAR
+190.58 points	NNS	10	VMOD
+--	:	13	P
+most	JJS	11	NMOD
+of	IN	13	NMOD
+it	PRP	14	PMOD
+in	IN	13	NMOD
+the final hour	NN	16	PMOD
+--	:	13	P
+it	PRP	21	SUB
+barely	RB	21	VMOD
+managed	VBD	-1	ROOT
+to	TO	23	VMOD
+stay	VB	21	VMOD
+this side	NN	23	VMOD
+of	IN	24	NMOD
+chaos	NN	25	PMOD
+.	.	21	P
+

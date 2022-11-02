@@ -1,0 +1,82 @@
+---
+template:
+  test: >
+    fairseq-generate data-{data}/{mode}
+      --bpe gpt2 --gpt2-encoder-json bart/encoder.json --gpt2-vocab-bpe bart/vocab.bpe
+      --fp16 --gen-subset {split}
+      --path output/Data_{data}-Mode_{mode}/checkpoint_avg.pt
+      --beam {beam}
+      --batch-size 2
+
+  testc: >
+    fairseq-interactive data-{data}/{mode} -s src -t tgt
+     --bpe gpt2 --gpt2-encoder-json bart/encoder.json --gpt2-vocab-bpe bart/vocab.bpe
+     --buffer-size 1000 --fp16 --constraints unordered
+     --input data-{data}/{mode}/{split}.mix
+     --path output/Data_{data}-Mode_{mode}/checkpoint_avg.pt
+     --beam {beam}
+     --batch-size 1
+
+default:
+  data: bart
+  mode: base
+  split: test
+
+resource: [ 0, 1, 2, 3 ]
+# run -y params_bart_decode.yaml -t <title> -o output_decode
+
+
+---
+# reproduce the main results: Table 1
+_title: base
+_cmd: [ test, testc ]
+data: [ bart ]
+mode: [ base ]
+beam: [ 512, 64, 5 ]
+split: [ test ]
+
+---
+# test permutation sensitivity: Table 2 & Table 6
+# with data augmentation:
+# baseX -> augX
+# shuffle subwords:
+# sbase -> shuf
+_title: perm
+_cmd: [ test, testc ]
+data: [ bart ]
+mode: [ base0, base2, base4, base6, base8, sbase ]
+beam: [ 64 ]
+split: [ test1, test2, test3, test4, test5, test6, test7, test8, test9, test10 ]
+
+---
+# simulate unconditional modeling: Figure 4
+# may OOM with limited gpu memory
+_title: basec
+_cmd: [ testc ]
+data: [ bart ]
+mode: [ base, ubase ]
+beam: [ 5, 10, 32, 64, 128, 256, 512, 1024 ]
+split: [ test ]
+
+---
+# inject different parts of a dependency tree: Table 3 & Table 4
+_title: tree
+_cmd: [ testc ]
+data: [ bart ]
+mode: [ base, all, brac, ldep, pos, udep ]
+beam: [ 64 ]
+split: [ valid ]
+
+---
+# partial tree linearization: Table 5
+_title: partial
+_cmd: [ testc ]
+data: [ bart ]
+mode: [ part, bnp ]
+beam: [ 64 ]
+split: [ test, test1, test2, test3, test4, test5, test6, test7, test8 ]
+
+
+
+
+

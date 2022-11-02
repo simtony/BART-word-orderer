@@ -1,0 +1,110 @@
+---
+# Assuming the trained models locate at `output`.
+# Please adjust the batch-size based on you GPU memory for faster decoding.
+# My implemetation of constrained decoding is not efficient. It can be much slower and uses much GPU memory.
+template:
+  # without constraint
+  test: >
+    fairseq-generate data-{data}/{mode}
+      --remove-bpe sentencepiece --memory-efficient-fp16 --gen-subset {split}
+      --path output/Data_{data}-Mode_{mode}/checkpoint_avg.pt
+      --beam {beam}
+      --batch-size 5
+
+  # with constraint
+  testc: >
+    fairseq-interactive data-{data}/{mode} -s src -t tgt
+      --path  output/Data_{data}-Mode_{mode}/checkpoint_avg.pt --constraints unordered
+      --remove-bpe sentencepiece --buffer-size 1000 --fp16
+      --input data-{data}/{mode}/{split}.mix
+      --beam {beam}
+      --batch-size 2
+
+  # without constraint, no input position embeddings
+  testp: >
+    fairseq-generate data-{data}/{mode}
+      --remove-bpe sentencepiece --memory-efficient-fp16 --gen-subset {split}
+      --path output/Data_{data}-Mode_{mode}-noInPoEmbeddings_T/checkpoint_avg.pt
+      --beam {beam}
+      --batch-size 5
+
+  # with constraint, no input position embeddings
+  testpc: >
+    fairseq-interactive data-{data}/{mode} -s src -t tgt
+          --path  output/Data_{data}-Mode_{mode}-noInPoEmbeddings_T/checkpoint_avg.pt --constraints unordered
+          --remove-bpe sentencepiece --buffer-size 1000 --fp16
+          --input data-{data}/{mode}/{split}.mix
+          --beam {beam}
+          --batch-size 2
+
+default:
+  data: rand
+  mode: base
+  split: test
+  no-input-position-embeddings: False
+
+resource: [ 0, 1, 2, 3 ]
+
+# run -t <title> -o output_decode
+---
+# reproduce the main results: Table 1
+_title: base
+_cmd: [ test, testc ]
+data: [ rand ]
+mode: [ base ]
+beam: [ 5, 64, 512 ]
+split: [ test ]
+
+---
+# test permutation sensitivity: Table 2 & Table 6
+# with data augmentation:
+# baseX -> augX
+# shuffle subwords:
+# sbase -> shuf
+_title: permutation
+_cmd: [ testc, test ]
+data: [ rand ]
+mode: [ base0, base2, base4, base6, base8, sbase ]
+beam: [ 64 ]
+split: [ test1, test2, test3, test4, test5, test6, test7, test8, test9, test10 ]
+
+---
+# test permutation sensitivity: no position embedding. Table 2 & Table 6
+# coresponding to npos
+_title: permutation
+_cmd: [ testp, testpc ]
+data: [ rand ]
+mode: [ base0 ]
+beam: [ 64 ]
+split: [ test1, test2, test3, test4, test5, test6, test7, test8, test9, test10 ]
+
+---
+# simulate unconditional modeling: Figure 4
+# may OOM with limited gpu memory
+_title: unconditional
+_cmd: [ testc ]
+data: [ rand ]
+mode: [ base, ubase ]
+beam: [ 5, 10, 32, 64, 128, 256, 512, 1024 ]
+split: [ test ]
+
+
+---
+# inject different parts of a dependency tree: Table 3 & Table 4
+_title: tree
+_cmd: [ testc ]
+data: [ rand ]
+mode: [ base, brac, pos, udep, ldep, all ]
+beam: [ 64 ]
+split: [ valid ]
+
+---
+# partial tree linearization: Table 5
+_title: partial
+_cmd: [ testc ]
+data: [ rand ]
+mode: [ part, bnp ]
+beam: [ 64 ]
+split: [ test, test1, test2, test3, test4, test5, test6, test7, test8 ]
+
+

@@ -246,13 +246,13 @@ def main(args):
         # sort output to match input order
         for id_, src_tokens, hypos, info in sorted(results, key=lambda x: x[0]):
             if src_dict is not None:
-                src_str = src_dict.string(src_tokens, args.remove_bpe)
+                src_str = decode_fn(src_dict.string(src_tokens, args.remove_bpe))
                 print("S-{}\t{}".format(id_, src_str))
                 print("W-{}\t{:.3f}\tseconds".format(id_, info["time"]))
                 for constraint in info["constraints"]:
                     print(
                         "C-{}\t{}".format(
-                            id_, tgt_dict.string(constraint, args.remove_bpe)
+                            id_, decode_fn(tgt_dict.string(constraint, args.remove_bpe))
                         )
                     )
 

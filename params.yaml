@@ -1,0 +1,81 @@
+---
+template:
+  train: >
+    fairseq-train data-{data}/{mode}
+      --arch transformer_iwslt_de_en
+      --share-decoder-input-output-embed
+      --share-all-embeddings
+      --lr-scheduler inverse_sqrt
+      --weight-decay 0.0001
+      --warmup-updates 4000
+      --optimizer adam
+      --criterion label_smoothed_cross_entropy_rdrop
+      --keep-interval-updates 5 --patience 10
+      --validate-interval-updates 1000
+      --save-interval-updates 1000
+      --no-save-optimizer-state
+      --no-last-checkpoints
+      --no-epoch-checkpoints
+      --log-format simple --log-interval 100
+      --tensorboard-logdir {_output}
+      --save-dir {_output} --fp16
+      --dropout 0.3 --label-smoothing 0.3 --reg-alpha 1
+      --lr 5e-4 --update-freq 2 --batch-size 50
+      [no-input-position-embeddings]
+
+  avg: >
+    python scripts/average_checkpoints.py --inputs {_output}
+       --num-update-checkpoints 5 --output {_output}/checkpoint_avg.pt
+
+  rm: >
+    rm -rf {_output}/checkpoint_*_*.pt {_output}/checkpoint_best.pt
+
+default:
+  data: rand
+  mode: base
+  no-input-position-embeddings: False
+
+resource: [ 0, 1, 2, 3 ]
+# run -t <title> -o output
+---
+# reproduce the baseline: Table 1
+_title: base
+data: [ rand ]
+mode: [ base ]
+
+---
+# test permutation sensitivity: Table 2 & Table 6
+# with data augmentation:
+# baseX -> augX
+# shuffle subwords:
+# sbase -> shuf
+_title: permutation
+data: [ rand ]
+mode: [ base0, base2, base4, base6, base8, sbase]
+
+---
+# test permutation sensitivity: no input position embedding: Table 2 & Table 6
+# coresponding to npos
+_title: permutation
+data: [ rand ]
+mode: [ base0 ]
+no-input-position-embeddings: [ True ]
+
+---
+# simulate unconditional modeling: Figure 4
+_title: unconditional
+data: [ rand ]
+mode: [ ubase ]
+
+---
+# inject different parts of a dependency tree: Table 3 & Table 4
+_title: tree
+data: [ rand ]
+mode: [ brac, pos, udep, ldep, all ]
+
+---
+# partial tree linearization: Table 5
+_title: partial_tree
+data: [ rand ]
+mode: [ part, bnp ]
+

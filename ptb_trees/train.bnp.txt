@@ -1,0 +1,42 @@
+In	IN	30	VMOD
+an Oct. 19 review	NN	0	PMOD
+of	IN	1	NMOD
+``	``	4	P
+The Misanthrope	NN	2	PMOD
+''	''	4	P
+at	IN	4	NMOD
+Chicago 's	POS	9	NMOD
+Goodman	NNP	9	NMOD
+Theatre	NNP	6	PMOD
+-LRB-	-LRB-	19	P
+``	``	19	P
+Revitalized Classics	NNP	13	SUB
+Take	NNP	19	DEP
+the Stage	NNP	13	OBJ
+in	IN	13	VMOD
+Windy City	NNP	15	PMOD
+,	,	19	P
+''	''	19	P
+Leisure & Arts	NNP	1	NMOD
+-RRB-	-RRB-	19	P
+,	,	30	P
+the role	NN	30	SUB
+of	IN	22	NMOD
+Celimene	NNP	23	PMOD
+,	,	22	P
+played	VBN	22	NMOD
+by	IN	26	VMOD
+Kim Cattrall	NNP	27	PMOD
+,	,	22	P
+was	VBD	-1	ROOT
+mistakenly	RB	32	VMOD
+attributed	VBN	30	VC
+to	TO	32	VMOD
+Christina Haag	NNP	33	PMOD
+.	.	30	P
+
+Ms. Haag	NNP	1	SUB
+plays	VBZ	-1	ROOT
+Elianti	NNP	1	OBJ
+.	.	1	P
+
